@@ -1,3 +1,3 @@
-import { Home } from "./home";
+import { Home, useModalStore } from "./home";
 
-export { Home };
+export { Home, useModalStore };
