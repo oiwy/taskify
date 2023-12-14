@@ -1,5 +1,4 @@
-import { Task } from "./task";
-import { Priority, TaskModel } from "./model/task";
+import { Task, Priority, TaskModel } from "./task";
 
 export type { TaskModel, Priority };
 export { Task };
