@@ -16,6 +16,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.0",
     "path": "^0.12.7",
+    "pinia": "^2.1.7",
     "sass": "^1.69.5",
     "typescript": "^5.2.2",
     "unplugin-auto-import": "^0.17.2",
