@@ -1,3 +1,3 @@
-import modalTask from "./ui/modalTask.vue";
+import ModalTask from "./ui/modalTask.vue";
 
-export { modalTask };
+export { ModalTask };

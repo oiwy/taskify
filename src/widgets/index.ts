@@ -1,4 +1,4 @@
 import { Header } from "./header";
-import { modalTask } from "./modalTask";
+import { ModalTask } from "./modalTask";
 
-export { Header, modalTask };
+export { Header, ModalTask };

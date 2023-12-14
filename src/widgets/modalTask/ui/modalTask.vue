@@ -1,61 +1,69 @@
 <template>
-  <dialog class="modal" :class="{ 'modal--open': isModalOpen }">
-    <div class="modal__container">
-      <Task
-        :title="task.title"
-        :description="task.description"
-        :completed="task.completed"
-        :priority="task.priority"
-      />
-    </div>
-  </dialog>
+  <el-dialog
+    class="dialog"
+    v-model="store.isOpen"
+    title="Edit Task"
+    align-center
+  >
+    <el-form class="dialog__form" :model="task" label-position="top">
+      <el-form-item class="dialog__form-item" label="Title">
+        <el-input v-model="task.title" autocomplete="off" />
+      </el-form-item>
+      <el-form-item class="dialog__form-item" label="Description">
+        <el-input v-model="task.description" autocomplete="off" />
+      </el-form-item>
+      <el-form-item class="dialog__form-item" label="Description">
+        <el-select
+          class="dialog__form-item"
+          v-model="task.priority"
+          placeholder="Priority"
+        >
+          <el-option label="Low" value="Low" />
+          <el-option label="Medium" value="Medium" />
+          <el-option label="High" value="High" />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog__footer">
+        <el-button @click="store.closeModal()">Cancel</el-button>
+        <el-button type="primary" @click="store.saveData(task)">
+          Confirm
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style lang="scss">
-.modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: none;
-  justify-content: center;
-  width: 100%;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 100;
-
-  &--open {
-    display: flex;
+.dialog {
+  &__form-item {
+    width: 100%;
   }
 
-  &__container {
+  &__footer {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    gap: 8px;
   }
 }
 </style>
 
 <script setup lang="ts">
-import { Task } from "@/entities";
+import { ref, watch } from "vue";
+import { TaskModel } from "@/entities";
+import { useModalStore } from "@/pages";
 
-const props = defineProps({
-  isModalOpen: {
-    type: Boolean,
-    default: false,
-  },
-  task: {
-    type: Object,
-    default: () => {
-      return {
-        id: 0,
-        title: "",
-        description: "",
-        completed: false,
-        priority: "Low",
-      };
-    },
-  },
-});
+const store = useModalStore();
+let task = ref<TaskModel>(store.temp);
+
+watch(
+  [() => store.temp, () => store.isOpen],
+  ([newTask, isOpen], [prevTask, prevIsOpen]) => {
+    if (newTask !== prevTask && isOpen !== prevIsOpen) {
+      task.value = newTask;
+    }
+  }
+);
 </script>
