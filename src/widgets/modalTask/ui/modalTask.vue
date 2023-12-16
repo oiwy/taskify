@@ -2,7 +2,7 @@
   <el-dialog
     class="dialog"
     v-model="store.isOpen"
-    title="Edit Task"
+    :title="store.titleModal"
     align-center
   >
     <el-form class="dialog__form" :model="task" label-position="top">
@@ -27,8 +27,27 @@
     <template #footer>
       <span class="dialog__footer">
         <el-button @click="store.closeModal()">Cancel</el-button>
-        <el-button type="primary" @click="store.saveData(task)">
+        <el-button
+          v-if="
+            store.titleModal === 'Add Task' || store.titleModal === 'Edit Task'
+          "
+          type="primary"
+          @click="store.saveData(task)"
+        >
           Confirm
+        </el-button>
+        <el-button
+          v-if="store.titleModal === 'Search Task'"
+          type="primary"
+          @click="
+            store.getTasks({
+              title: task.title,
+              description: task.description,
+              priority: task.priority,
+            })
+          "
+        >
+          Search
         </el-button>
       </span>
     </template>
@@ -37,6 +56,8 @@
 
 <style lang="scss">
 .dialog {
+  max-width: 500px;
+
   &__form-item {
     width: 100%;
   }
@@ -51,9 +72,9 @@
 </style>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { TaskModel } from "@/entities";
+import { watch, ref } from "vue";
 import { useModalStore } from "@/pages";
+import { TaskModel } from "@/entities";
 
 const store = useModalStore();
 let task = ref<TaskModel>(store.temp);
@@ -63,6 +84,14 @@ watch(
   ([newTask, isOpen], [prevTask, prevIsOpen]) => {
     if (newTask !== prevTask && isOpen !== prevIsOpen) {
       task.value = newTask;
+    } else if (!isOpen) {
+      task.value = {
+        id: 0,
+        title: "",
+        description: "",
+        completed: false,
+        priority: "Low",
+      };
     }
   }
 );
