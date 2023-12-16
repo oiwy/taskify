@@ -1,41 +1,40 @@
 <template>
-  <div class="card">
+  <el-card class="card" shadow="hover">
     <div class="card__header">
       <div class="card__task">
-        <el-checkbox v-model="props.completed" size="large" />
+        <el-checkbox
+          @click="emit('completeTask')"
+          v-model="props.completed"
+          size="large"
+        />
         <h3 class="card__title">{{ props.title }}</h3>
       </div>
-      <div class="card__actions">
-        <el-button
-          @click="emit('deleteTask')"
-          type="danger"
-          :icon="Delete"
-          circle
-        />
+      <el-row class="card__actions">
+        <el-popconfirm
+          title="Are you sure to delete this?"
+          @confirm="emit('deleteTask')"
+        >
+          <template #reference>
+            <el-button type="danger" :icon="Delete" circle />
+          </template>
+        </el-popconfirm>
         <el-button
           @click="emit('editTask')"
           type="primary"
           :icon="Edit"
           circle
         />
-      </div>
+      </el-row>
     </div>
     <p class="card__description">{{ props.description }}</p>
-    <span class="card__priority" :style="colorPriority(props.priority)">{{
-      props.priority
-    }}</span>
-  </div>
+    <el-tag class="card__priority" :type="typePriority(props.priority)">
+      {{ props.priority }}
+    </el-tag>
+  </el-card>
 </template>
 
 <style lang="scss" scoped>
 .card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 8px;
-  border: 1px solid var(--el-border-color);
-  border-radius: 4px;
-
   &__header {
     display: flex;
     align-items: center;
@@ -70,6 +69,7 @@
   }
 
   &__priority {
+    width: fit-content;
     font-size: 12px;
     font-weight: 600;
     line-height: 100%;
@@ -90,20 +90,21 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
+  completeTask: [];
   deleteTask: [];
   editTask: [];
 }>();
 
-const colorPriority = (priority: Priority | undefined) => {
+const typePriority = (priority: Priority | undefined) => {
   switch (priority) {
     case "Low": {
-      return "color: var(--el-color-success);";
+      return "success";
     }
     case "Medium": {
-      return "color: var(--el-color-warning);";
+      return "warning";
     }
     case "High": {
-      return "color: var(--el-color-danger);";
+      return "danger";
     }
   }
 };
