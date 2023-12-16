@@ -6,12 +6,21 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: "Montserrat", sans-serif;
 }
 
 body {
   font-family: "Montserrat", sans-serif;
 }
 
+/* Element Plus */
 .el-button + .el-button {
   margin-left: 0;
+}
+
+.el-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
 }
