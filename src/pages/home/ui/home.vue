@@ -5,7 +5,12 @@
         Add task
       </el-button>
     </div>
-    <div v-for="task in tasks" v-if="tasks.length > 0" :key="task.id">
+    <!-- Add component Tasks with Task -->
+    <div
+      v-for="task in incompleteTasks"
+      v-if="incompleteTasks.length > 0"
+      :key="task.id"
+    >
       <Task
         v-if="!task.completed"
         :title="task.title"
@@ -17,7 +22,7 @@
         @edit-task="store.editTask(task)"
       />
     </div>
-    <el-empty v-else :image-size="200" class="home__empty" />
+    <el-empty v-else :image-size="200" />
     <CompleteTask />
   </el-container>
   <ModalTask />
@@ -26,26 +31,33 @@
 <style lang="scss" scoped>
 .home {
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 
   &__add {
     display: flex;
     gap: 5px;
     width: 100%;
   }
-
-  &__empty {
-    width: 100%;
-    height: 65vh;
-  }
 }
 </style>
 
 <script setup lang="ts">
-import { Task } from "@/entities";
+import { ref, computed, watch } from "vue";
+import { Task, TaskModel } from "@/entities";
 import { useModalStore } from "@/pages";
 import { CompleteTask, ModalTask } from "@/widgets";
 
 const store = useModalStore();
-let tasks = store.getTasks();
+let tasks = ref<TaskModel[]>(store.getTasks());
+
+watch(
+  () => store.tasks,
+  () => {
+    tasks.value = store.tasks;
+  }
+);
+
+const incompleteTasks = computed(() => {
+  return tasks.value.filter((task: { completed: boolean }) => !task.completed);
+});
 </script>
