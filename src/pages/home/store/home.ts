@@ -4,32 +4,33 @@ import { ElNotification } from "element-plus";
 
 export const useModalStore = defineStore("modal", {
   state: () => ({
-    isOpen: false,
+    isOpen: false as boolean,
+    titleModal: "" as string,
     temp: {} as TaskModel,
-    task: {} as TaskModel,
+    tasks: [] as TaskModel[],
   }),
   actions: {
-    getTasks() {
-      const tasksJson = localStorage.getItem("tasks");
-      let tasks = tasksJson ? JSON.parse(tasksJson) : [];
-
-      return tasks;
-    },
     closeModal() {
       this.isOpen = false;
     },
     addTask() {
+      this.titleModal = "Add Task";
       this.isOpen = true;
     },
     editTask(task: TaskModel) {
+      this.titleModal = "Edit Task";
       this.temp = task;
-
+      this.isOpen = true;
+    },
+    searchTask() {
+      this.titleModal = "Search Task";
       this.isOpen = true;
     },
     saveData(task: TaskModel) {
       const tasksJson = localStorage.getItem("tasks");
       let tasks = tasksJson ? JSON.parse(tasksJson) : [];
       let newTask = {} as TaskModel;
+      console.log(task);
 
       if (task.id) {
         const index = tasks.findIndex((t: TaskModel) => t.id === task.id);
@@ -46,7 +47,7 @@ export const useModalStore = defineStore("modal", {
           title: task.title,
           description: task.description,
           completed: false,
-          priority: task.priority,
+          priority: task.priority || "Medium",
         };
 
         tasks.push(newTask);
@@ -90,5 +91,71 @@ export const useModalStore = defineStore("modal", {
 
       window.location.reload();
     },
+    getTasks(
+      searchQuery: {
+        title?: string;
+        description?: string;
+        priority?: string;
+      } = {}
+    ) {
+      const tasksJson = localStorage.getItem("tasks");
+      let tasks: TaskModel[] = tasksJson ? JSON.parse(tasksJson) : [];
+      this.tasks = tasks;
+
+      console.log(searchQuery);
+
+      // Если searchQuery пуст, возвращаем все задачи.
+      if (Object.keys(searchQuery).length === 0) {
+        return tasks;
+      }
+
+      // Фильтрация задач на основе searchQuery.
+      const filteredTasks = tasks.filter((task: TaskModel) => {
+        const matchesTitle = searchQuery.title
+          ? task.title.toLowerCase().includes(searchQuery.title.toLowerCase())
+          : true;
+        const matchesDescription = searchQuery.description
+          ? task.description
+              .toLowerCase()
+              .includes(searchQuery.description.toLowerCase())
+          : true;
+        const matchesPriority = searchQuery.priority
+          ? task.priority === searchQuery.priority
+          : true;
+        return matchesTitle && matchesDescription && matchesPriority;
+      });
+
+      this.tasks = filteredTasks;
+      return filteredTasks;
+    },
+    sortTask(sortBy: string) {
+      const tasksJson = localStorage.getItem("tasks");
+      let tasks = tasksJson ? JSON.parse(tasksJson) : [];
+
+      tasks = tasks.filter((task: TaskModel) => {
+        const { title, description, priority } = task;
+
+        return (
+          (sortBy === "title" && title) ||
+          (sortBy === "description" && description) ||
+          (sortBy === "priority" && priority)
+        );
+      });
+
+      tasks.sort((a: TaskModel, b: TaskModel) => {
+        if (sortBy === "title" && a.title && b.title) {
+          return a.title.localeCompare(b.title);
+        }
+        if (sortBy === "description" && a.description && b.description) {
+          return a.description.localeCompare(b.description);
+        }
+        if (sortBy === "priority" && a.priority && b.priority) {
+          return (a.priority = b.priority);
+        }
+        return 0;
+      });
+
+      return tasks;
+    },
   },
-});
+} as const);
