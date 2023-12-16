@@ -5,17 +5,20 @@
         Add task
       </el-button>
     </div>
-    <el-col v-for="task in tasks" :key="task.id">
+    <div v-for="task in tasks" v-if="tasks.length > 0" :key="task.id">
       <Task
+        v-if="!task.completed"
         :title="task.title"
         :description="task.description"
         :completed="task.completed"
         :priority="task.priority"
+        @complete-task="store.completeTask(task.id)"
         @delete-task="store.deleteTask(task.id)"
         @edit-task="store.editTask(task)"
       />
-    </el-col>
-    <!-- <el-empty v-else :image-size="200" /> -->
+    </div>
+    <el-empty v-else :image-size="200" class="home__empty" />
+    <CompleteTask />
   </el-container>
   <ModalTask />
 </template>
@@ -30,14 +33,19 @@
     gap: 5px;
     width: 100%;
   }
+
+  &__empty {
+    width: 100%;
+    height: 65vh;
+  }
 }
 </style>
 
 <script setup lang="ts">
-import { Task, TaskModel } from "@/entities";
+import { Task } from "@/entities";
 import { useModalStore } from "@/pages";
-import { ModalTask } from "@/widgets";
+import { CompleteTask, ModalTask } from "@/widgets";
 
 const store = useModalStore();
-let tasks = JSON.parse(localStorage.getItem("tasks") || "[]") as TaskModel[];
+let tasks = store.getTasks();
 </script>
