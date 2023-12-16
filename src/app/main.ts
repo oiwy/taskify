@@ -15,8 +15,3 @@ const router = createRouter({
 const app = createApp(App);
 
 app.use(router).use(ElementPlus).use(pinia).mount("#app");
-
-// Добавить Tag в Приоритет из Element Plus
-// Доделать модальное окно по изменению задачи ЧЕРЕЗ КОМПОНЕНТ DIALOG ЕБАНОГО ELEMENT PLUS
-// Cделать модальное окно по добавлению задачи
-// Сделать Notification в модальном окне, ошибках
