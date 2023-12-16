@@ -10,6 +10,12 @@
         <h3 class="card__title">{{ props.title }}</h3>
       </div>
       <el-row class="card__actions">
+        <el-button
+          @click="emit('editTask')"
+          type="primary"
+          :icon="Edit"
+          circle
+        />
         <el-popconfirm
           title="Are you sure to delete this?"
           @confirm="emit('deleteTask')"
@@ -18,12 +24,6 @@
             <el-button type="danger" :icon="Delete" circle />
           </template>
         </el-popconfirm>
-        <el-button
-          @click="emit('editTask')"
-          type="primary"
-          :icon="Edit"
-          circle
-        />
       </el-row>
     </div>
     <p class="card__description">{{ props.description }}</p>
