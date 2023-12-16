@@ -1,7 +1,7 @@
 <template>
   <el-header class="header">
     <h2 class="header__title">taskify</h2>
-    <el-button :icon="Search" circle />
+    <el-button @click="store.searchTask()" :icon="Search" circle />
   </el-header>
 </template>
 
@@ -22,4 +22,7 @@
 
 <script setup lang="ts">
 import { Search } from "@element-plus/icons-vue";
+import { useModalStore } from "@/pages";
+
+const store = useModalStore();
 </script>
